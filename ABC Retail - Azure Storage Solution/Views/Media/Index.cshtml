@@ -1,0 +1,56 @@
+﻿@using System.IO
+@model IEnumerable<ABCRetail.AzureStorage.Services.BlobInfo>
+
+@{
+    ViewData["Title"] = "Media Gallery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Media Gallery</h1>
+<p>Images stored in <strong>Azure Blob Storage</strong></p>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a href="/Media/Upload" class="btn btn-primary">Upload Image</a>
+    </div>
+</div>
+
+@if (TempData["UploadSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["UploadSuccess"]</div>
+}
+@if (TempData["DeleteSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["DeleteSuccess"]</div>
+}
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-img-top text-center bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="@item.Url" alt="@item.Name" style="max-height: 180px; max-width: 100%; object-fit: contain;" />
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><small>@System.IO.Path.GetFileName(item.Name)</small></p>
+                        <p class="card-text"><small>Size: @(item.Size / 1024) KB</small></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/Media/Download?blobName=@Uri.EscapeDataString(item.Name)" class="btn btn-sm btn-info">Download</a>
+                        <form method="post" action="/Media/Delete" style="display: inline;">
+                            <input type="hidden" name="blobName" value="@item.Name" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this image?')">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12"><p class="text-center">No images found.</p></div>
+    }
+</div>

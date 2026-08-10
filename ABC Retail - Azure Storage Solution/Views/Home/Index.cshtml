@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">ABC Retail - Azure Storage Solution</h1>
+    <p class="lead">Managing customer orders, products, and inventory with Azure Storage Services</p>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Customers</h5>
+                <p class="card-text">Manage customer profiles stored in Azure Table Storage</p>
+                <a href="/Customers" class="btn btn-primary">View Customers</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Products</h5>
+                <p class="card-text">Manage products with images stored in Azure Blob Storage</p>
+                <a href="/Products" class="btn btn-primary">View Products</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Orders</h5>
+                <p class="card-text">Process orders using Azure Queue Storage</p>
+                <a href="/Orders" class="btn btn-primary">View Orders</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Logs</h5>
+                <p class="card-text">Application logs stored in Azure File Storage</p>
+                <a href="/Logs" class="btn btn-primary">View Logs</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Azure Storage Services Used</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Azure Table Storage</strong> - Customer profiles and product information</li>
+                    <li><strong>Azure Blob Storage</strong> - Product images and multimedia content</li>
+                    <li><strong>Azure Queue Storage</strong> - Order processing and inventory management messages</li>
+                    <li><strong>Azure File Storage</strong> - Application log files</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

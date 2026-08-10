@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ABCRetail.AzureStorage.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Products</h1>
+<p>Data stored in <strong>Azure Table Storage</strong> with images in <strong>Azure Blob Storage</strong></p>
+
+<p>
+    <a href="/Products/Create" class="btn btn-primary">Create New Product</a>
+</p>
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-img-top text-center bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl" alt="@item.Name" style="max-height: 180px; max-width: 100%;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Image</span>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">@item.Description</p>
+                        <p class="card-text">
+                            <strong>Price:</strong> $@item.Price.ToString("F2")<br />
+                            <strong>Stock:</strong> @item.StockQuantity<br />
+                            <strong>Category:</strong> @item.Category
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/Products/Edit/@item.ProductId" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="/Products/Delete/@item.ProductId" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12"><p class="text-center">No products found.</p></div>
+    }
+</div>

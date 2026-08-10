@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Upload Image";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Upload Image</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Upload" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label for="file" class="control-label">Select Image</label>
+                <input type="file" name="file" class="form-control" accept="image/*" required />
+                <small class="text-muted">Supported formats: JPG, JPEG, PNG, GIF, BMP, WEBP</small>
+            </div>
+
+            <div class="form-group">
+                <label for="subFolder" class="control-label">Subfolder (Optional)</label>
+                <input type="text" name="subFolder" class="form-control" placeholder="e.g., products, profiles" />
+                <small class="text-muted">Leave empty to upload to root folder</small>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+                <a href="/Media" class="btn btn-secondary">Back to Gallery</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="alert alert-info">
+            <h5>Azure Blob Storage</h5>
+            <p>Images will be stored in Azure Blob Storage with:</p>
+            <ul>
+                <li><strong>Container:</strong> productimages</li>
+                <li><strong>Public Access:</strong> Enabled for viewing</li>
+                <li><strong>Unique Names:</strong> Auto-generated GUID</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-body text-center">
+                <h5>Upload Preview</h5>
+                <img id="preview" src="#" alt="Preview" style="max-height: 200px; max-width: 100%; display: none;" />
+                <p id="noPreview" class="text-muted">Select an image to preview</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelector('input[name="file"]').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('preview');
+            const noPreview = document.getElementById('noPreview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    noPreview.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                noPreview.style.display = 'block';
+            }
+        });
+    </script>
+}

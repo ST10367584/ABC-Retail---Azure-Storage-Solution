@@ -1,0 +1,63 @@
+﻿@model IEnumerable<ABCRetail.AzureStorage.Models.OrderMessage>
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var queueLength = ViewBag.QueueLength ?? 0;
+}
+
+<h1>Order Queue</h1>
+<p>Messages stored in <strong>Azure Queue Storage</strong></p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="alert alert-info">
+            <strong>Queue Length:</strong> @queueLength messages waiting
+        </div>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="/Orders/Create" class="btn btn-primary">Create Order</a>
+        <form method="post" action="/Orders/ProcessNext" style="display: inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-success">Process Next Order</button>
+        </form>
+    </div>
+</div>
+
+@if (TempData["ProcessedOrder"] != null)
+{
+    <div class="alert alert-success">@TempData["ProcessedOrder"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Order Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.OrderId</td>
+                    <td>@item.CustomerName</td>
+                    <td>@item.Items.Count item(s)</td>
+                    <td>$@item.TotalAmount.ToString("F2")</td>
+                    <td><span class="badge bg-warning">@item.Status</span></td>
+                    <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6" class="text-center">No orders in queue.</td></tr>
+        }
+    </tbody>
+</table>

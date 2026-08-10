@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ABCRetail.AzureStorage.Models.Customer>
+
+@{
+    ViewData["Title"] = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Customers</h1>
+<p>Data stored in <strong>Azure Table Storage</strong> (PartitionKey: Customer)</p>
+
+<p>
+    <a href="/Customers/Create" class="btn btn-primary">Create New Customer</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>City</th>
+            <th>Registered</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CustomerId</td>
+                    <td>@($"{item.FirstName} {item.LastName}")</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.City</td>
+                    <td>@item.DateRegistered?.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a href="/Customers/Edit/@item.CustomerId" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="/Customers/Delete/@item.CustomerId" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="7" class="text-center">No customers found.</td></tr>
+        }
+    </tbody>
+</table>
