@@ -1,0 +1,1 @@
+# ABC Retail - Azure Storage Solution
