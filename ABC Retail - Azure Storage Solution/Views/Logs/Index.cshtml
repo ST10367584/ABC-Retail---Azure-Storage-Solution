@@ -1,0 +1,76 @@
+﻿@model IEnumerable<ABCRetail.AzureStorage.Models.LogEntry>
+
+@{
+    ViewData["Title"] = "Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Application Logs</h1>
+<p>Logs stored in <strong>Azure File Storage</strong></p>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="post" action="/Logs/CreateTestLogs" style="display: inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-secondary">Generate Test Logs</button>
+        </form>
+    </div>
+</div>
+
+@if (TempData["TestLogsCreated"] != null)
+{
+    <div class="alert alert-success">@TempData["TestLogsCreated"]</div>
+}
+@if (TempData["LogCreated"] != null)
+{
+    <div class="alert alert-success">@TempData["LogCreated"]</div>
+}
+@if (TempData["LogDeleted"] != null)
+{
+    <div class="alert alert-success">@TempData["LogDeleted"]</div>
+}
+
+<table class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Level</th>
+            <th>Source</th>
+            <th>Message</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                var levelClass = item.Level?.ToLower() switch
+                {
+                    "error" => "text-danger",
+                    "warning" => "text-warning",
+                    "information" => "text-info",
+                    _ => ""
+                };
+                <tr>
+                    <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td class="@levelClass">@item.Level</td>
+                    <td>@item.Source</td>
+                    <td>@item.Message</td>
+                    <td>
+                        <a href="/Logs/View/@item.LogId" class="btn btn-sm btn-info">View</a>
+                        <form method="post" action="/Logs/Delete" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.LogId" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this log?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="5" class="text-center">No logs found. Generate test logs to get started.</td></tr>
+        }
+    </tbody>
+</table>

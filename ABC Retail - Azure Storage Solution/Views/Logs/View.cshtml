@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "View Log";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var logId = ViewBag.LogId;
+    var content = ViewBag.Content;
+}
+
+<h1>View Log Entry</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <strong>Log ID:</strong> @logId
+            </div>
+            <div class="card-body">
+                <pre style="white-space: pre-wrap; word-wrap: break-word; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 14px;">@content</pre>
+            </div>
+            <div class="card-footer">
+                <a href="/Logs" class="btn btn-secondary">Back to Logs</a>
+                <form method="post" action="/Logs/Delete" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@logId" />
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this log?')">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="alert alert-info">
+            <h5>Azure File Storage</h5>
+            <p>Logs are stored in Azure File Storage with:</p>
+            <ul>
+                <li><strong>File Share:</strong> logs</li>
+                <li><strong>Directory:</strong> application-logs</li>
+                <li><strong>Format:</strong> .log files</li>
+            </ul>
+        </div>
+    </div>
+</div>
