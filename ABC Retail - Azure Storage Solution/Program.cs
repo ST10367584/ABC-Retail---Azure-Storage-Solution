@@ -39,12 +39,15 @@ builder.Services.AddSingleton(x => new BlobServiceClient(connectionString));
 builder.Services.AddSingleton(x => new QueueServiceClient(connectionString));
 builder.Services.AddSingleton(x => new ShareServiceClient(connectionString));
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSingleton<ITableStorageService, TableStorageService>();
 builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
 builder.Services.AddSingleton<IQueueStorageService, QueueStorageService>();
 builder.Services.AddSingleton<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAppLogger, AppLogger>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 

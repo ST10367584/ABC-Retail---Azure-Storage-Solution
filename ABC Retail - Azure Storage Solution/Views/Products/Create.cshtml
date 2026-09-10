@@ -3,88 +3,129 @@
 @{
     ViewData["Title"] = "Create Product";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = new[] { "Phones", "Laptops", "Watches", "Audio", "Tablets", "Accessories" };
 }
 
-<h1>Create Product</h1>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="page-header header-products">
+    <h1>➕ Create Product</h1>
+    <p>Add a new product to the catalogue</p>
+</div>
 
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" required />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+<div class="row g-4">
+    <!-- ============ FORM ============ -->
+    <div class="col-12 col-lg-7">
+        <div class="card">
+            <div class="card-body p-4">
+                <form asp-action="Create" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+                    <!-- Name -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Name" class="form-label">Product Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="e.g. iPhone 17 Pro" required />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
 
-            <!-- PRICE INPUT - CHANGED TO RAND (ZAR) -->
-            <div class="form-group">
-                <label asp-for="Price" class="control-label">Price (ZAR - Rands)</label>
-                <div class="input-group">
-                    <span class="input-group-text">R</span>
-                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0.01" required value="@Model?.Price.ToString("F2")" />
-                </div>
-                <span asp-validation-for="Price" class="text-danger"></span>
-                <small class="text-muted">Enter the product price in Rands (e.g., 199.99)</small>
-            </div>
+                    <!-- Description -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"
+                                  placeholder="Brief description of the product"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="StockQuantity" class="control-label">Stock Quantity</label>
-                <input asp-for="StockQuantity" class="form-control" type="number" min="0" required />
-                <span asp-validation-for="StockQuantity" class="text-danger"></span>
-            </div>
+                    <!-- Price -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Price" class="form-label">Price (ZAR)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R</span>
+                            <input asp-for="Price" class="form-control" type="number"
+                                   step="0.01" min="0.01" placeholder="0.00" required />
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" required />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
+                    <!-- Stock + Category side-by-side -->
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label asp-for="StockQuantity" class="form-label">Stock Quantity</label>
+                            <input asp-for="StockQuantity" class="form-control" type="number"
+                                   min="0" placeholder="0" required />
+                            <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                        </div>
 
-            <div class="form-group">
-                <label for="imageFile" class="control-label">Product Image</label>
-                <input type="file" name="imageFile" class="form-control" accept="image/*" />
-                <small class="text-muted">Optional: Upload a product image</small>
-            </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label asp-for="Category" class="form-label">Category</label>
+                            <select asp-for="Category" class="form-select" required>
+                                <option value="">-- Select Category --</option>
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat">@cat</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger small"></span>
+                        </div>
+                    </div>
 
-            <div class="form-group mt-3">
-                <input type="submit" value="Create Product" class="btn btn-primary" />
-                <a href="/Products" class="btn btn-secondary">Back to List</a>
+                    <!-- Image -->
+                    <div class="form-group mb-3">
+                        <label for="imageFile" class="form-label">Product Image</label>
+                        <input type="file" name="imageFile" id="imageFile"
+                               class="form-control" accept="image/*" />
+                        <small class="text-muted">Optional — JPG, PNG, WEBP</small>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 mt-4 flex-wrap">
+                        <button type="submit" class="btn btn-primary">
+                            ✅ Create Product
+                        </button>
+                        <a href="/Products" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
-    <!-- Price Preview Card - CHANGED TO RAND -->
-    <div class="col-md-6">
-        <div class="card">
+    <!-- ============ SIDE PANEL ============ -->
+    <div class="col-12 col-lg-5">
+        <!-- Price Preview -->
+        <div class="card mb-3">
             <div class="card-header">
-                <h5>💰 Price Preview (ZAR)</h5>
+                <h5 class="mb-0">💰 Price Preview</h5>
             </div>
-            <div class="card-body text-center">
-                <div style="font-size: 3rem; color: #2563eb; font-weight: 700;">
+            <div class="card-body text-center py-4">
+                <div style="font-size: 3rem; font-weight: 700; color: #007aff; line-height: 1;">
                     <span id="pricePreview">R 0.00</span>
                 </div>
-                <p class="text-muted">Enter a price above to see it formatted</p>
-                <div class="alert alert-info">
-                    <strong>Format:</strong> South African Rand (ZAR) with 2 decimal places
+                <p class="text-muted mb-0 mt-3">Enter a price above to see it formatted</p>
+            </div>
+        </div>
+
+        <!-- Image Preview -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">🖼️ Image Preview</h5>
+            </div>
+            <div class="card-body text-center py-4">
+                <img id="imagePreview" src="#" alt="Preview"
+                     style="display:none; max-height: 200px; max-width: 100%; object-fit: contain;" />
+                <div id="noPreview" class="text-muted">
+                    <div style="font-size: 3rem;">📷</div>
+                    <p class="mb-0 small">No image selected</p>
                 </div>
             </div>
         </div>
 
-        <div class="card mt-3">
+        <!-- Storage Info -->
+        <div class="card">
             <div class="card-header">
-                <h5>Azure Storage Services Used</h5>
+                <h5 class="mb-0">☁️ Azure Storage</h5>
             </div>
             <div class="card-body">
-                <ul>
-                    <li><strong>Azure Table Storage</strong> - Product information including price (ZAR)</li>
-                    <li><strong>Azure Blob Storage</strong> - Product images</li>
+                <ul class="mb-0 small">
+                    <li><strong>Table Storage</strong> — Product info & price</li>
+                    <li><strong>Blob Storage</strong> — Product images</li>
                 </ul>
             </div>
         </div>
@@ -93,14 +134,36 @@
 
 @section Scripts {
     <script>
-        // Live price preview - CHANGED TO RAND
-        document.querySelector('input[name="Price"]').addEventListener('input', function() {
-            const price = parseFloat(this.value) || 0;
-            document.getElementById('pricePreview').textContent = 'R ' + price.toFixed(2);
-        });
+        // Live price preview
+        const priceInput = document.querySelector('input[name="Price"]');
+        const pricePreview = document.getElementById('pricePreview');
 
-        // Trigger initial preview
-        const initialPrice = parseFloat(document.querySelector('input[name="Price"]').value) || 0;
-        document.getElementById('pricePreview').textContent = 'R ' + initialPrice.toFixed(2);
+        function updatePrice() {
+            const p = parseFloat(priceInput.value) || 0;
+            pricePreview.textContent = 'R ' + p.toFixed(2);
+        }
+        priceInput.addEventListener('input', updatePrice);
+        updatePrice();
+
+        // Image preview
+        const imageInput = document.getElementById('imageFile');
+        const imagePreview = document.getElementById('imagePreview');
+        const noPreview = document.getElementById('noPreview');
+
+        imageInput?.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    noPreview.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+                noPreview.style.display = 'block';
+            }
+        });
     </script>
 }

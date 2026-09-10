@@ -54,10 +54,17 @@
                 <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" required />
-                <span asp-validation-for="Category" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="Category" class="form-label">Category</label>
+                <select asp-for="Category" class="form-select" required>
+                    <option value="">-- Select Category --</option>
+                    @foreach (var cat in new[] { "Phones", "Laptops", "Watches", "Audio", "Tablets", "Accessories" })
+                    {
+                        var selected = Model.Category == cat ? "selected" : "";
+                        <option value="@cat" selected="@selected">@cat</option>
+                    }
+                </select>
+                <span asp-validation-for="Category" class="text-danger small"></span>
             </div>
 
             <div class="form-group">

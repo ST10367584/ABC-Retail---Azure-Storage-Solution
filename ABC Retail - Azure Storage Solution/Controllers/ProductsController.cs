@@ -24,29 +24,38 @@ namespace ABCRetail.AzureStorage.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        // GET: /Products?category=Phones&search=iphone
+        public async Task<IActionResult> Index(string? category, string? search)
         {
             try
             {
                 var products = await _tableService.GetAllProductsAsync();
 
-                _logger.LogInformation(
-    "PRODUCT COUNT = {Count}",
-    products.Count);
-
-                foreach (var product in products)
+                // Filter by category
+                if (!string.IsNullOrEmpty(category))
                 {
-                    _logger.LogInformation(
-                        "PRODUCT: {Id} | {Name} | R{Price}",
-                        product.ProductId,
-                        product.Name,
-                        product.Price);
+                    products = products
+                        .Where(p => string.Equals(p.Category, category, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
                 }
 
-                await _appLogger.LogAsync(
-                    "Information",
-                    "Products",
-                    $"Products list viewed ({products.Count} products shown)",
+                // Filter by search term
+                if (!string.IsNullOrEmpty(search))
+                {
+                    products = products
+                        .Where(p => (p.Name ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)
+                                 || (p.Description ?? "").Contains(search, StringComparison.OrdinalIgnoreCase)
+                                 || (p.Category ?? "").Contains(search, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
+
+                ViewBag.Category = category;
+                ViewBag.Search = search;
+
+                _logger.LogInformation($"PRODUCT COUNT = {products.Count}");
+
+                await _appLogger.LogAsync("Information", "Products",
+                    $"Products list viewed ({products.Count} shown){(!string.IsNullOrEmpty(category) ? $" | Category: {category}" : "")}{(!string.IsNullOrEmpty(search) ? $" | Search: {search}" : "")}",
                     User.Identity?.Name ?? "Guest");
 
                 return View(products);
@@ -54,15 +63,69 @@ namespace ABCRetail.AzureStorage.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "ERROR loading products from Azure Table Storage");
-
-                await _appLogger.LogAsync(
-                    "Error",
-                    "Products",
+                await _appLogger.LogAsync("Error", "Products",
                     $"Error loading products: {ex.Message}",
                     User.Identity?.Name ?? "Guest");
-
-                // IMPORTANT: show the actual error during debugging
                 return Content($"ERROR LOADING PRODUCTS: {ex.Message}");
+            }
+        }
+
+        // GET: /Products/Trending — returns JSON of top products for home page
+        [HttpGet]
+        public async Task<IActionResult> Trending()
+        {
+            try
+            {
+                var products = await _tableService.GetAllProductsAsync();
+                var trending = products
+                    .Where(p => p.StockQuantity > 0)
+                    .OrderByDescending(p => p.Price)
+                    .Take(8)
+                    .Select(p => new
+                    {
+                        productId = p.ProductId,
+                        name = p.Name,
+                        price = p.Price,
+                        imageUrl = p.ImageUrl,
+                        category = p.Category
+                    });
+
+                return Json(trending);
+            }
+            catch
+            {
+                return Json(new List<object>());
+            }
+        }
+
+        // GET: /Products/Details/{id}
+        public async Task<IActionResult> Details(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            try
+            {
+                var product = await _tableService.GetProductAsync(id);
+                if (product == null)
+                {
+                    await _appLogger.LogAsync("Warning", "Products",
+                        $"Attempted to view non-existent product: {id}",
+                        User.Identity?.Name ?? "Guest");
+                    return NotFound();
+                }
+
+                await _appLogger.LogAsync("Information", "Products",
+                    $"Viewed product details: '{product.Name}' (ID: {id})",
+                    User.Identity?.Name ?? "Guest");
+
+                return View(product);
+            }
+            catch (Exception ex)
+            {
+                await _appLogger.LogAsync("Error", "Products",
+                    $"Error loading product details: {id} - {ex.Message}",
+                    User.Identity?.Name ?? "Guest");
+                return NotFound();
             }
         }
 

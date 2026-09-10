@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -42,6 +44,31 @@
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
+                            @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" href="/Cart">
+                                        🛒 Cart
+                                        @{
+                                            var cartJson = Context.Session.GetString("ShoppingCart");
+                                            var count = 0;
+                                            if (!string.IsNullOrEmpty(cartJson))
+                                            {
+                                                try
+                                                {
+                                                    var cart = System.Text.Json.JsonSerializer.Deserialize<ABCRetail.AzureStorage.Models.Cart>(cartJson);
+                                                    count = cart?.TotalItems ?? 0;
+                                                }
+                                                catch { }
+                                            }
+                                        }
+                                        @if (count > 0)
+                                        {
+                                            <span class="badge bg-danger">@count</span>
+                                        }
+                                    </a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <span class="nav-link text-white">👋 @User.Identity.Name</span>
                             </li>

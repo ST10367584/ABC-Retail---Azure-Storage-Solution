@@ -1,81 +1,247 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isAdmin = User.IsInRole("Admin");
+    var isLoggedIn = User.Identity?.IsAuthenticated == true;
 }
 
-<div class="text-center">
-    <h1 class="display-4">ABC Retail - Azure Storage Solution</h1>
-    <p class="lead">Managing customer orders, products, and inventory with Azure Storage Services</p>
+<!-- ================= HERO ================= -->
+<section class="page-header text-center" style="padding: 60px 40px;">
+    <h1 style="font-size: 3rem;">🛍️ Welcome to ABC Retail</h1>
+    <p style="font-size: 1.15rem;">Your one-stop shop for premium tech and gadgets</p>
+
+    @if (!isAdmin)
+    {
+        <div class="mt-4">
+            <a href="/Products" class="btn btn-primary btn-lg me-2">🛒 Shop Now</a>
+            @if (!isLoggedIn)
+            {
+                <a href="/Account/Register" class="btn btn-success btn-lg">✨ Create Account</a>
+            }
+        </div>
+    }
+</section>
+
+<!-- ================= CATEGORY DROPDOWN + SEARCH ================= -->
+@if (!isAdmin)
+{
+    <section class="mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-12 col-md-4">
+                <label class="form-label">📂 Category</label>
+                <select id="categoryDropdown" class="form-select">
+                    <option value="">All Categories</option>
+                    <option value="Phones">📱 Phones</option>
+                    <option value="Laptops">💻 Laptops</option>
+                    <option value="Watches">⌚ Watches</option>
+                    <option value="Audio">🎧 Audio</option>
+                    <option value="Tablets">📱 Tablets</option>
+                    <option value="Accessories">🔌 Accessories</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-8">
+                <label class="form-label">🔍 Search</label>
+                <div class="input-group">
+                    <input type="text" id="heroSearch" class="form-control" placeholder="Search products..." />
+                    <span class="input-group-text">🔍</span>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- ================= PROMO BANNER ================= -->
+@if (!isAdmin)
+{
+    <section class="mb-4">
+        <div class="card" style="background: linear-gradient(135deg, #ff3b30, #ff9500); color: white; border: none;">
+            <div class="card-body text-center py-4">
+                <h3 class="mb-2">🎉 Summer Sale — Up to 30% OFF!</h3>
+                <p class="mb-0">Use code <strong>SUMMER30</strong> at checkout. Limited time only!</p>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- ================= FEATURED QUICK LINKS ================= -->
+<div class="row mt-5 g-4">
+    @if (isAdmin)
+    {
+        <!-- Admin Quick Links -->
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">👥</span>
+                    <h5 class="card-title">Customers</h5>
+                    <p class="card-text">Manage customer profiles in Azure Table Storage</p>
+                    <a href="/Customers" class="btn btn-primary">View Customers</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">📦</span>
+                    <h5 class="card-title">Products</h5>
+                    <p class="card-text">Manage products, pricing and inventory</p>
+                    <a href="/Products" class="btn btn-primary">Manage Products</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">🛒</span>
+                    <h5 class="card-title">Orders</h5>
+                    <p class="card-text">Process orders from Azure Queue Storage</p>
+                    <a href="/Orders" class="btn btn-primary">View Orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">📊</span>
+                    <h5 class="card-title">Logs</h5>
+                    <p class="card-text">Application logs in Azure File Storage</p>
+                    <a href="/Logs" class="btn btn-primary">View Logs</a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Customer Quick Links -->
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">📱</span>
+                    <h5 class="card-title">Phones</h5>
+                    <p class="card-text">Latest smartphones from top brands</p>
+                    <a href="/Products?category=Phones" class="btn btn-primary">Shop Phones</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">💻</span>
+                    <h5 class="card-title">Laptops</h5>
+                    <p class="card-text">Powerful laptops for work and play</p>
+                    <a href="/Products?category=Laptops" class="btn btn-primary">Shop Laptops</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">🎧</span>
+                    <h5 class="card-title">Audio</h5>
+                    <p class="card-text">Headphones, earbuds and speakers</p>
+                    <a href="/Products?category=Audio" class="btn btn-primary">Shop Audio</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card text-center home-card">
+                <div class="card-body">
+                    <span class="icon">⌚</span>
+                    <h5 class="card-title">Watches</h5>
+                    <p class="card-text">Smart watches and fitness trackers</p>
+                    <a href="/Products?category=Watches" class="btn btn-primary">Shop Watches</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-<div class="row mt-5">
-    <div class="col-md-3">
-        <div class="card text-center home-card">
-            <div class="card-body">
-                <span class="icon">👥</span>
-                <h5 class="card-title">Customers</h5>
-                <p class="card-text">Manage customer profiles stored in Azure Table Storage</p>
-                <a href="/Customers" class="btn btn-primary">View Customers</a>
+<!-- ================= TRENDING / PROMO ITEMS ================= -->
+@if (!isAdmin)
+{
+    <section class="mt-5">
+        <h2 class="mb-4">🔥 Trending Now</h2>
+        <div class="row g-4" id="trendingGrid">
+            <!-- Populated by JS from /api/products/trending OR fallback static -->
+            <div class="col-12 text-center text-muted py-4">
+                <p>Loading trending products...</p>
             </div>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center home-card">
-            <div class="card-body">
-                <span class="icon">📦</span>
-                <h5 class="card-title">Products</h5>
-                <p class="card-text">Manage products with images and <strong>pricing</strong> in Azure Blob Storage</p>
-                <a href="/Products" class="btn btn-primary">View Products</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center home-card">
-            <div class="card-body">
-                <span class="icon">🛒</span>
-                <h5 class="card-title">Orders</h5>
-                <p class="card-text">Process orders with <strong>price calculations</strong> using Azure Queue Storage</p>
-                <a href="/Orders" class="btn btn-primary">View Orders</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center home-card">
-            <div class="card-body">
-                <span class="icon">📊</span>
-                <h5 class="card-title">Logs</h5>
-                <p class="card-text">Application logs stored in Azure File Storage</p>
-                <a href="/Logs" class="btn btn-primary">View Logs</a>
-            </div>
-        </div>
-    </div>
-</div>
+    </section>
+}
 
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Azure Storage Services Used</h5>
-            </div>
-            <div class="card-body">
-                <ul>
-                    <li><strong>Azure Table Storage</strong> - Customer profiles and product information with <strong>pricing</strong></li>
-                    <li><strong>Azure Blob Storage</strong> - Product images and multimedia content</li>
-                    <li><strong>Azure Queue Storage</strong> - Order processing with <strong>price calculations</strong></li>
-                    <li><strong>Azure File Storage</strong> - Application log files</li>
-                </ul>
+<!-- ================= STORAGE INFO (Admin Only) ================= -->
+@if (isAdmin)
+{
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>⚙️ Azure Storage Services</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>Azure Table Storage</strong> — Customer profiles and product information</li>
+                        <li><strong>Azure Blob Storage</strong> — Product images and multimedia content</li>
+                        <li><strong>Azure Queue Storage</strong> — Order processing queue</li>
+                        <li><strong>Azure File Storage</strong> — Application log files</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
-<!-- Price Features Card -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card bg-primary text-white">
-            <div class="card-body text-center">
-                <h4>💰 Full Price Management</h4>
-                <p class="mb-0">Set product prices, calculate order totals, and track inventory values</p>
-            </div>
-        </div>
-    </div>
-</div>
+@section Scripts {
+    <script>
+        // Category dropdown → redirect to Products with filter
+        document.getElementById('categoryDropdown')?.addEventListener('change', function () {
+            const cat = this.value;
+            if (cat) {
+                window.location.href = `/Products?category=${encodeURIComponent(cat)}`;
+            } else {
+                window.location.href = '/Products';
+            }
+        });
+
+        // Hero search → redirect to Products with search
+        document.getElementById('heroSearch')?.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                const term = this.value.trim();
+                window.location.href = term ? `/Products?search=${encodeURIComponent(term)}` : '/Products';
+            }
+        });
+
+        // Load trending products (top 4)
+        fetch('/Products/Trending')
+            .then(r => r.ok ? r.json() : [])
+            .then(items => {
+                const grid = document.getElementById('trendingGrid');
+                if (!grid) return;
+                if (!items.length) {
+                    grid.innerHTML = '<div class="col-12 text-center text-muted py-4"><p>No trending products right now.</p></div>';
+                    return;
+                }
+                grid.innerHTML = items.slice(0, 4).map(p => `
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card h-100 product-card">
+                            <div class="card-img-top text-center bg-light" style="height:200px; display:flex; align-items:center; justify-content:center;">
+                                ${p.imageUrl
+                                    ? `<img src="${p.imageUrl}" style="max-height:180px; max-width:100%; object-fit:contain;" />`
+                                    : '<span class="text-muted">📷 No Image</span>'}
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">${p.name}</h6>
+                                <div class="price-display">
+                                    <span class="price">R ${p.price.toFixed(2)}</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/Products/Details/${p.productId}" class="btn btn-sm btn-primary w-100">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(() => {});
+    </script>
+}

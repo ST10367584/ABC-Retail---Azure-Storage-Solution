@@ -7,59 +7,61 @@
     var totalSpent = (decimal)(ViewBag.TotalSpent ?? 0m);
 }
 
-<div class="container mt-4">
-    <div class="page-header">
-        <h1>👋 Welcome, @Model.FirstName!</h1>
-        <p>Manage your account and view your orders</p>
-    </div>
+<div class="page-header">
+    <h1>👋 Welcome, @Model.FirstName!</h1>
+    <p>Manage your account and view your orders</p>
+</div>
 
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="stat-card blue">
-                <h6>Total Orders</h6>
-                <h3>@myOrders.Count</h3>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="stat-card green">
-                <h6>Total Spent</h6>
-                <h3>R @totalSpent.ToString("F2")</h3>
-            </div>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="stat-card orange">
-                <h6>Pending Orders</h6>
-                <h3>@myOrders.Count(o => o.Status == "Pending" || o.Status == "Processing")</h3>
-            </div>
+<!-- ============ STATS ============ -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-lg-4">
+        <div class="stat-card blue">
+            <h6>Total Orders</h6>
+            <h3>@myOrders.Count</h3>
         </div>
     </div>
+    <div class="col-12 col-sm-6 col-lg-4">
+        <div class="stat-card green">
+            <h6>Total Spent</h6>
+            <h3>R @totalSpent.ToString("F2")</h3>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4">
+        <div class="stat-card orange">
+            <h6>Pending Orders</h6>
+            <h3>@myOrders.Count(o => o.Status == "Pending" || o.Status == "Processing")</h3>
+        </div>
+    </div>
+</div>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>⚡ Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="/MyAccount/Cart" class="btn btn-primary">🛒 My Cart</a>
-                        <a href="/MyAccount/OrderHistory" class="btn btn-success">📦 Order History</a>
-                        <a href="/MyAccount/Profile" class="btn btn-info">👤 My Profile</a>
-                        <a href="/Products" class="btn btn-warning">🛍️ Shop Products</a>
-                    </div>
-                </div>
+<!-- ============ CONTENT ============ -->
+<div class="row g-4">
+    <!-- Quick Actions -->
+    <div class="col-12 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">⚡ Quick Actions</h5>
+            </div>
+            <div class="card-body d-flex flex-column gap-2">
+                <a href="/Cart" class="btn btn-primary">🛒 My Cart</a>
+                <a href="/MyAccount/OrderHistory" class="btn btn-success">📦 Order History</a>
+                <a href="/MyAccount/Profile" class="btn btn-info">👤 My Profile</a>
+                <a href="/Products" class="btn btn-warning">🛍️ Shop Products</a>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-8 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>📦 Recent Orders</h5>
-                </div>
-                <div class="card-body">
-                    @if (myOrders.Any())
-                    {
-                        <table class="table">
+    <!-- Recent Orders -->
+    <div class="col-12 col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">📦 Recent Orders</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (myOrders.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table mb-0">
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
@@ -73,23 +75,25 @@
                                 @foreach (var order in myOrders.Take(5))
                                 {
                                     <tr>
-                                        <td>@order.OrderId?.Substring(0, 8)...</td>
-                                        <td>@order.Items.Count item(s)</td>
-                                        <td>R @order.TotalAmount.ToString("F2")</td>
-                                        <td>
-                                            <span class="badge bg-warning">@order.Status</span>
-                                        </td>
+                                        <td><code>@(order.OrderId?.Length > 8 ? order.OrderId.Substring(0, 8) : order.OrderId)</code></td>
+                                        <td>@order.Items.Count</td>
+                                        <td><strong>R @order.TotalAmount.ToString("F2")</strong></td>
+                                        <td><span class="badge bg-warning">@order.Status</span></td>
                                         <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center py-4">You haven't placed any orders yet.</p>
-                    }
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div style="font-size: 3rem;">📦</div>
+                        <p class="text-muted mb-2">No orders yet</p>
+                        <a href="/Products" class="btn btn-primary btn-sm">Start Shopping</a>
+                    </div>
+                }
             </div>
         </div>
     </div>

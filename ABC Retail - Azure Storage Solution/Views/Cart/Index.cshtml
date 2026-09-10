@@ -1,0 +1,116 @@
+﻿@model ABCRetail.AzureStorage.Models.Cart
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header" style="background: var(--gradient-info);">
+    <h1>🛒 Shopping Cart</h1>
+    <p>@Model.TotalItems item(s) in your cart</p>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (Model.Items.Any())
+{
+    <div class="row">
+        <div class="col-12 col-lg-8 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Cart Items</h5>
+                </div>
+                <div class="card-body p-0">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="cart-item d-flex align-items-center p-3 border-bottom">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.ProductName"
+                                     style="width: 80px; height: 80px; object-fit: contain; background: #f8fafc; border-radius: 8px; padding: 4px;" />
+                            }
+                            else
+                            {
+                                <div style="width: 80px; height: 80px; background: #f8fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center;">📷</div>
+                            }
+
+                            <div class="ms-3 flex-grow-1">
+                                <h6 class="mb-1">@item.ProductName</h6>
+                                <small class="text-muted">R @item.UnitPrice.ToString("F2") each</small>
+                            </div>
+
+                            <form method="post" action="/Cart/UpdateQuantity" class="d-flex align-items-center me-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="1"
+                                       class="form-control form-control-sm" style="width: 70px;"
+                                       onchange="this.form.submit();" />
+                            </form>
+
+                            <div class="text-end me-3" style="min-width: 100px;">
+                                <strong>R @item.Subtotal.ToString("F2")</strong>
+                            </div>
+
+                            <form method="post" action="/Cart/Remove">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-sm btn-danger">✕</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer d-flex justify-content-between flex-wrap gap-2">
+                    <a href="/Products" class="btn btn-secondary">← Continue Shopping</a>
+                    <form method="post" action="/Cart/Clear" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Clear entire cart?')">Clear Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <strong>R @Model.Total.ToString("F2")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping</span>
+                        <strong>R 0.00</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-4">
+                        <h5 class="mb-0">Total</h5>
+                        <h5 class="mb-0 text-primary">R @Model.Total.ToString("F2")</h5>
+                    </div>
+                    <a href="/Cart/Checkout" class="btn btn-success btn-lg w-100">
+                        ✅ Proceed to Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <h2>🛒</h2>
+            <h4>Your cart is empty</h4>
+            <p class="text-muted">Add some products to get started</p>
+            <a href="/Products" class="btn btn-primary btn-lg mt-2">Browse Products</a>
+        </div>
+    </div>
+}

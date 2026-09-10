@@ -5,17 +5,38 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <div class="page-header">
-        <h1>📦 Order History</h1>
-        <p>All your past orders</p>
-    </div>
+<div class="page-header">
+    <h1>📦 Order History</h1>
+    <p>All your past orders</p>
+</div>
 
-    <div class="card">
-        <div class="card-body">
-            @if (Model.Any())
-            {
-                <table class="table table-striped">
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-4">
+        <div class="stat-card blue">
+            <h6>Total Orders</h6>
+            <h3>@Model.Count</h3>
+        </div>
+    </div>
+    <div class="col-12 col-sm-4">
+        <div class="stat-card green">
+            <h6>Total Spent</h6>
+            <h3>R @Model.Sum(o => o.TotalAmount).ToString("F2")</h3>
+        </div>
+    </div>
+    <div class="col-12 col-sm-4">
+        <div class="stat-card orange">
+            <h6>Average Order</h6>
+            <h3>R @(Model.Any() ? Model.Average(o => o.TotalAmount).ToString("F2") : "0.00")</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table mb-0">
                     <thead>
                         <tr>
                             <th>Order ID</th>
@@ -30,24 +51,25 @@
                         @foreach (var order in Model.OrderByDescending(o => o.OrderDate))
                         {
                             <tr>
-                                <td>@order.OrderId?.Substring(0, 8)...</td>
+                                <td><code>@(order.OrderId?.Length > 8 ? order.OrderId.Substring(0, 8) : order.OrderId)</code></td>
                                 <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>@order.Items.Count item(s)</td>
+                                <td>@order.Items.Count</td>
                                 <td><strong>R @order.TotalAmount.ToString("F2")</strong></td>
                                 <td><span class="badge bg-warning">@order.Status</span></td>
-                                <td>@order.ShippingAddress</td>
+                                <td class="small text-muted">@order.ShippingAddress</td>
                             </tr>
                         }
                     </tbody>
                 </table>
-            }
-            else
-            {
-                <div class="text-center py-5">
-                    <h4>No order history yet</h4>
-                    <a href="/Products" class="btn btn-primary mt-3">Start Shopping</a>
-                </div>
-            }
-        </div>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <div style="font-size: 3rem;">📦</div>
+                <h5>No order history yet</h5>
+                <a href="/Products" class="btn btn-primary mt-2">Start Shopping</a>
+            </div>
+        }
     </div>
 </div>

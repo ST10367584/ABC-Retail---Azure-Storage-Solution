@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Order Placed";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card text-center">
+        <div class="card-body py-5">
+            <h1 style="font-size: 4rem;">🎉</h1>
+            <h2 class="text-success">Order Placed Successfully!</h2>
+            <p class="lead">Thank you for your order</p>
+
+            <div class="alert alert-info d-inline-block mt-3" style="min-width: 320px;">
+                <div><strong>Order ID:</strong> @ViewBag.OrderId</div>
+                <div><strong>Total Paid:</strong> R @ViewBag.OrderTotal</div>
+            </div>
+
+            <div class="mt-4">
+                <a href="/Products" class="btn btn-primary btn-lg">Continue Shopping</a>
+                <a href="/Cart" class="btn btn-secondary btn-lg">View Cart</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,111 @@
+﻿@model ABCRetail.AzureStorage.Models.CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var cart = ViewBag.Cart as ABCRetail.AzureStorage.Models.Cart;
+}
+
+<div class="page-header" style="background: var(--gradient-success);">
+    <h1>✅ Checkout</h1>
+    <p>Confirm your delivery details to place your order</p>
+</div>
+
+<div class="row">
+    <div class="col-12 col-lg-7 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📍 Delivery Details</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Checkout" method="post" id="checkoutForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="FullName">Full Name</label>
+                        <input asp-for="FullName" class="form-control" required />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone">Phone</label>
+                            <input asp-for="Phone" class="form-control" required />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Address">Delivery Address</label>
+                        <input asp-for="Address" class="form-control" required />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label asp-for="City">City</label>
+                            <input asp-for="City" class="form-control" required />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label asp-for="PostalCode">Postal Code</label>
+                            <input asp-for="PostalCode" class="form-control" required />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Notes">Delivery Notes (Optional)</label>
+                        <textarea asp-for="Notes" class="form-control" rows="2" placeholder="e.g. Gate code, leave at door..."></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="PaymentMethod">Payment Method</label>
+                        <select asp-for="PaymentMethod" class="form-control">
+                            <option>Cash on Delivery</option>
+                            <option>Card on Delivery</option>
+                            <option>EFT / Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            🎉 Place Order — R @(cart?.Total.ToString("F2") ?? "0.00")
+                        </button>
+                        <a href="/Cart" class="btn btn-secondary">← Back to Cart</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🛒 Your Order (@cart?.TotalItems items)</h5>
+            </div>
+            <div class="card-body">
+                @if (cart != null && cart.Items.Any())
+                {
+                    @foreach (var item in cart.Items)
+                    {
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span>@item.ProductName × @item.Quantity</span>
+                            <strong>R @item.Subtotal.ToString("F2")</strong>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-0">Total</h5>
+                        <h5 class="mb-0 text-primary">R @cart.Total.ToString("F2")</h5>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
