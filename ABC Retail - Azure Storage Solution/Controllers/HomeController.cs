@@ -2,7 +2,7 @@ using System.Diagnostics;
 using ABCRetail.AzureStorage.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ABC_Retail___Azure_Storage_Solution.Controllers
+namespace ABCRetail.AzureStorage.Controllers
 {
     public class HomeController : Controller
     {

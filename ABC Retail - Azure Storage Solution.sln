@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36915.13 d17.14
+VisualStudioVersion = 17.14.36915.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABC Retail - Azure Storage Solution", "ABC Retail - Azure Storage Solution\ABC Retail - Azure Storage Solution.csproj", "{FFCEEC17-3115-4EFA-8860-B3AFCC081661}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions", "Functions\Functions.csproj", "{9104FC95-9902-434A-9EF2-75C918CCAC6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{FFCEEC17-3115-4EFA-8860-B3AFCC081661}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFCEEC17-3115-4EFA-8860-B3AFCC081661}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFCEEC17-3115-4EFA-8860-B3AFCC081661}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9104FC95-9902-434A-9EF2-75C918CCAC6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9104FC95-9902-434A-9EF2-75C918CCAC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9104FC95-9902-434A-9EF2-75C918CCAC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9104FC95-9902-434A-9EF2-75C918CCAC6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

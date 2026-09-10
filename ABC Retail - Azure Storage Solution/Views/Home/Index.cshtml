@@ -9,8 +9,9 @@
 
 <div class="row mt-5">
     <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center home-card">
             <div class="card-body">
+                <span class="icon">👥</span>
                 <h5 class="card-title">Customers</h5>
                 <p class="card-text">Manage customer profiles stored in Azure Table Storage</p>
                 <a href="/Customers" class="btn btn-primary">View Customers</a>
@@ -18,26 +19,29 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center home-card">
             <div class="card-body">
+                <span class="icon">📦</span>
                 <h5 class="card-title">Products</h5>
-                <p class="card-text">Manage products with images stored in Azure Blob Storage</p>
+                <p class="card-text">Manage products with images and <strong>pricing</strong> in Azure Blob Storage</p>
                 <a href="/Products" class="btn btn-primary">View Products</a>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center home-card">
             <div class="card-body">
+                <span class="icon">🛒</span>
                 <h5 class="card-title">Orders</h5>
-                <p class="card-text">Process orders using Azure Queue Storage</p>
+                <p class="card-text">Process orders with <strong>price calculations</strong> using Azure Queue Storage</p>
                 <a href="/Orders" class="btn btn-primary">View Orders</a>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center home-card">
             <div class="card-body">
+                <span class="icon">📊</span>
                 <h5 class="card-title">Logs</h5>
                 <p class="card-text">Application logs stored in Azure File Storage</p>
                 <a href="/Logs" class="btn btn-primary">View Logs</a>
@@ -54,11 +58,23 @@
             </div>
             <div class="card-body">
                 <ul>
-                    <li><strong>Azure Table Storage</strong> - Customer profiles and product information</li>
+                    <li><strong>Azure Table Storage</strong> - Customer profiles and product information with <strong>pricing</strong></li>
                     <li><strong>Azure Blob Storage</strong> - Product images and multimedia content</li>
-                    <li><strong>Azure Queue Storage</strong> - Order processing and inventory management messages</li>
+                    <li><strong>Azure Queue Storage</strong> - Order processing with <strong>price calculations</strong></li>
                     <li><strong>Azure File Storage</strong> - Application log files</li>
                 </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Price Features Card -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h4>💰 Full Price Management</h4>
+                <p class="mb-0">Set product prices, calculate order totals, and track inventory values</p>
             </div>
         </div>
     </div>

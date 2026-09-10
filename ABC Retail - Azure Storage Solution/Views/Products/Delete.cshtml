@@ -33,8 +33,9 @@
             <dt class="col-sm-3">Description</dt>
             <dd class="col-sm-9">@Model.Description</dd>
 
+            <!-- PRICE DISPLAY - CHANGED TO RAND -->
             <dt class="col-sm-3">Price</dt>
-            <dd class="col-sm-9">$@Model.Price.ToString("F2")</dd>
+            <dd class="col-sm-9"><strong class="text-primary">R @Model.Price.ToString("F2")</strong></dd>
 
             <dt class="col-sm-3">Stock</dt>
             <dd class="col-sm-9">@Model.StockQuantity</dd>
@@ -48,7 +49,7 @@
 
         <form asp-action="Delete">
             <input type="hidden" asp-for="ProductId" />
-            <input type="submit" value="Delete" class="btn btn-danger" />
+            <input type="submit" value="Delete Product" class="btn btn-danger" />
             <a href="/Products" class="btn btn-secondary">Cancel</a>
         </form>
     </div>

@@ -9,6 +9,7 @@ namespace ABCRetail.AzureStorage.Models
         public string PartitionKey { get; set; } = "Customer";
         public string RowKey { get; set; } = Guid.NewGuid().ToString();
         public string? CustomerId { get; set; }
+
         [Required(ErrorMessage = "First name is required")]
         [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
         public string? FirstName { get; set; }
@@ -32,6 +33,16 @@ namespace ABCRetail.AzureStorage.Models
 
         [StringLength(20)]
         public string? PostalCode { get; set; }
+
+        // 🔐 Authentication Fields
+        [Required(ErrorMessage = "Password is required")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters")]
+        [DataType(DataType.Password)]
+        public string? Password { get; set; }
+
+        [Required]
+        public string Role { get; set; } = "Customer"; // "Customer" or "Admin"
+
         public DateTime? DateRegistered { get; set; }
         public ETag ETag { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
@@ -41,6 +52,7 @@ namespace ABCRetail.AzureStorage.Models
             PartitionKey = "Customer";
             RowKey = Guid.NewGuid().ToString();
             DateRegistered = DateTime.UtcNow;
+            Role = "Customer";
         }
 
         public Customer(string customerId) : this()

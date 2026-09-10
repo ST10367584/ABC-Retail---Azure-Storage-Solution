@@ -3,80 +3,96 @@
 @{
     ViewData["Title"] = "Create Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var customers = ViewBag.Customers as List<ABCRetail.AzureStorage.Models.Customer>;
-    var products = ViewBag.Products as List<ABCRetail.AzureStorage.Models.Product>;
+    var customers = ViewBag.Customers as List<ABCRetail.AzureStorage.Models.Customer> ?? new();
+    var products = ViewBag.Products as List<ABCRetail.AzureStorage.Models.Product> ?? new();
 }
 
-<h1>Create Order</h1>
-<hr />
+<div class="page-header header-orders">
+    <h1>🛒 Create Order</h1>
+    <p>Fill in the order details below</p>
+</div>
+
 <div class="row">
-    <div class="col-md-8">
-        <form asp-action="Create">
+    <div class="col-12 col-lg-8">
+        <form asp-action="Create" id="orderForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- ✅ AUTO-FILL ON CUSTOMER SELECT -->
             <div class="form-group">
-                <label asp-for="CustomerId" class="control-label">Customer</label>
-                <select asp-for="CustomerId" class="form-control" required>
-                    <option value="">Select Customer</option>
-                    @if (customers != null)
+                <label asp-for="CustomerId">Customer</label>
+                <select asp-for="CustomerId" id="customerSelect" class="form-control" required>
+                    <option value="">-- Select Customer --</option>
+                    @foreach (var customer in customers)
                     {
-                        @foreach (var customer in customers)
-                        {
-                            <option value="@customer.CustomerId">@($"{customer.FirstName} {customer.LastName}")</option>
-                        }
+                        <option value="@customer.CustomerId"
+                                data-name="@($"{customer.FirstName} {customer.LastName}")"
+                                data-address="@customer.Address"
+                                data-city="@customer.City"
+                                data-postal="@customer.PostalCode">
+                            @($"{customer.FirstName} {customer.LastName}") - @customer.Email
+                        </option>
                     }
                 </select>
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="CustomerName" class="control-label"></label>
-                <input asp-for="CustomerName" class="form-control" required />
-                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                <label asp-for="CustomerName">Customer Name</label>
+                <input asp-for="CustomerName" id="customerName" class="form-control" readonly />
             </div>
 
             <div class="form-group">
-                <label asp-for="ShippingAddress" class="control-label"></label>
-                <textarea asp-for="ShippingAddress" class="form-control" rows="3" required></textarea>
-                <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                <label asp-for="ShippingAddress">Shipping Address</label>
+                <textarea asp-for="ShippingAddress" id="shippingAddress" class="form-control" rows="3" required></textarea>
             </div>
 
             <hr />
             <h5>Order Items</h5>
             <div id="itemsContainer">
-                <div class="row mb-2 item-row">
-                    <div class="col-md-4">
+                <div class="row mb-2 item-row g-2">
+                    <div class="col-12 col-md-5">
                         <select name="Items[0].ProductId" class="form-control product-select" required>
                             <option value="">Select Product</option>
-                            @if (products != null)
+                            @foreach (var product in products)
                             {
-                                @foreach (var product in products)
-                                {
-                                    <option value="@product.ProductId" data-price="@product.Price">@product.Name</option>
-                                }
+                                <option value="@product.ProductId" data-price="@product.Price" data-name="@product.Name">
+                                    @product.Name - R @product.Price.ToString("F2")
+                                </option>
                             }
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <input type="text" name="Items[0].ProductName" class="form-control product-name" placeholder="Product Name" required />
+                    <div class="col-6 col-md-3">
+                        <input type="text" name="Items[0].ProductName" class="form-control product-name" placeholder="Product" readonly />
                     </div>
-                    <div class="col-md-2">
-                        <input type="number" name="Items[0].Quantity" class="form-control quantity" placeholder="Qty" value="1" min="1" required />
+                    <div class="col-3 col-md-2">
+                        <input type="number" name="Items[0].Quantity" class="form-control quantity" value="1" min="1" required />
                     </div>
-                    <div class="col-md-2">
-                        <input type="number" name="Items[0].UnitPrice" class="form-control unit-price" placeholder="Price" step="0.01" required />
-                    </div>
-                    <div class="col-md-1">
-                        <button type="button" class="btn btn-danger remove-item">X</button>
+                    <div class="col-3 col-md-2">
+                        <input type="number" name="Items[0].UnitPrice" class="form-control unit-price" step="0.01" readonly />
                     </div>
                 </div>
             </div>
-            <button type="button" id="addItem" class="btn btn-sm btn-secondary mb-3">Add Item</button>
+            <button type="button" id="addItem" class="btn btn-sm btn-secondary mb-3">+ Add Item</button>
 
-            <div class="form-group">
-                <label asp-for="TotalAmount" class="control-label"></label>
-                <input asp-for="TotalAmount" class="form-control" type="number" step="0.01" readonly />
-                <span asp-validation-for="TotalAmount" class="text-danger"></span>
+            <div class="card bg-light">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <label asp-for="TotalAmount">Total Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R</span>
+                                <input asp-for="TotalAmount" id="totalAmount" class="form-control" readonly
+                                       style="font-size: 1.2rem; font-weight: bold; color: var(--primary);" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 text-md-end">
+                            <div class="p-3">
+                                <p id="itemCount" class="mb-1">Items: 0</p>
+                                <p id="totalItems" class="mb-0">Total Qty: 0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group mt-3">
@@ -85,93 +101,92 @@
             </div>
         </form>
     </div>
-    <div class="col-md-4">
+
+    <div class="col-12 col-lg-4">
         <div class="alert alert-info">
-            <h5>Azure Queue Storage</h5>
-            <p>Order messages will be stored in Azure Queue Storage.</p>
-            <ul>
-                <li><strong>Queue Name:</strong> orderprocessing</li>
-                <li><strong>Messages:</strong> JSON format</li>
-            </ul>
+            <h5>ℹ️ Azure Queue Storage</h5>
+            <p>Order will be queued and processed by Azure Functions.</p>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        let itemIndex = 1;
+        // ✅ AUTO-FILL customer name and address on select
+        document.getElementById('customerSelect').addEventListener('change', function () {
+            const opt = this.options[this.selectedIndex];
+            const name = opt.dataset.name || '';
+            const address = opt.dataset.address || '';
+            const city = opt.dataset.city || '';
+            const postal = opt.dataset.postal || '';
 
-        document.getElementById('addItem').addEventListener('click', function() {
+            document.getElementById('customerName').value = name;
+            document.getElementById('shippingAddress').value =
+                [address, city, postal].filter(Boolean).join(', ');
+        });
+
+        // ✅ AUTO-FILL product name and price on select
+        function bindProductSelects() {
+            document.querySelectorAll('.product-select').forEach(sel => {
+                sel.onchange = function () {
+                    const opt = this.options[this.selectedIndex];
+                    const row = this.closest('.item-row');
+                    row.querySelector('.product-name').value = opt.dataset.name || '';
+                    row.querySelector('.unit-price').value = opt.dataset.price || 0;
+                    calculateTotal();
+                };
+            });
+        }
+
+        let itemIndex = 1;
+        document.getElementById('addItem').addEventListener('click', function () {
             const container = document.getElementById('itemsContainer');
             const newRow = document.createElement('div');
-            newRow.className = 'row mb-2 item-row';
+            newRow.className = 'row mb-2 item-row g-2 animate-fade-in';
             newRow.innerHTML = `
-                        <div class="col-md-4">
-                            <select name="Items[${itemIndex}].ProductId" class="form-control product-select" required>
-                                <option value="">Select Product</option>
-                                @if (products != null)
-                                {
-                                        @foreach (var product in products)
-                                        {
-                                                <option value="@product.ProductId" data-price="@product.Price">@product.Name</option>
-                                        }
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" name="Items[${itemIndex}].ProductName" class="form-control product-name" placeholder="Product Name" required />
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" name="Items[${itemIndex}].Quantity" class="form-control quantity" placeholder="Qty" value="1" min="1" required />
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" name="Items[${itemIndex}].UnitPrice" class="form-control unit-price" placeholder="Price" step="0.01" required />
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-danger remove-item">X</button>
-                        </div>
-                    `;
+                <div class="col-12 col-md-5">
+                    <select name="Items[${itemIndex}].ProductId" class="form-control product-select" required>
+                        <option value="">Select Product</option>
+                        @foreach (var product in products)
+                        {
+                                <option value="@product.ProductId" data-price="@product.Price" data-name="@product.Name">
+                                    @product.Name - R @product.Price.ToString("F2")
+                                </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <input type="text" name="Items[${itemIndex}].ProductName" class="form-control product-name" readonly />
+                </div>
+                <div class="col-3 col-md-2">
+                    <input type="number" name="Items[${itemIndex}].Quantity" class="form-control quantity" value="1" min="1" required />
+                </div>
+                <div class="col-3 col-md-2">
+                    <input type="number" name="Items[${itemIndex}].UnitPrice" class="form-control unit-price" step="0.01" readonly />
+                </div>`;
             container.appendChild(newRow);
             itemIndex++;
-            calculateTotal();
+            bindProductSelects();
         });
 
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-item')) {
-                const row = e.target.closest('.item-row');
-                if (document.querySelectorAll('.item-row').length > 1) {
-                    row.remove();
-                    calculateTotal();
-                }
-            }
-        });
-
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('product-select')) {
-                const row = e.target.closest('.item-row');
-                const selectedOption = e.target.options[e.target.selectedIndex];
-                const productName = selectedOption.text;
-                const price = selectedOption.dataset.price;
-                row.querySelector('.product-name').value = productName;
-                row.querySelector('.unit-price').value = price || 0;
-                calculateTotal();
-            }
-        });
-
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('quantity') || e.target.classList.contains('unit-price')) {
-                calculateTotal();
-            }
+        // ✅ Recalculate total on any quantity change
+        document.addEventListener('input', e => {
+            if (e.target.classList.contains('quantity')) calculateTotal();
         });
 
         function calculateTotal() {
-            let total = 0;
-            document.querySelectorAll('.item-row').forEach(function(row) {
-                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
-                const price = parseFloat(row.querySelector('.unit-price').value) || 0;
-                total += quantity * price;
+            let total = 0, count = 0, qty = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const q = parseFloat(row.querySelector('.quantity')?.value) || 0;
+                const p = parseFloat(row.querySelector('.unit-price')?.value) || 0;
+                total += q * p;
+                if (q > 0 && p > 0) { count++; qty += q; }
             });
-            document.getElementById('TotalAmount').value = total.toFixed(2);
+            document.getElementById('totalAmount').value = total.toFixed(2);
+            document.getElementById('itemCount').textContent = `Items: ${count}`;
+            document.getElementById('totalItems').textContent = `Total Qty: ${qty}`;
         }
+
+        bindProductSelects();
     </script>
 }

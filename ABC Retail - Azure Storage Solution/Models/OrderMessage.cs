@@ -6,6 +6,7 @@ namespace ABCRetail.AzureStorage.Models
     public class OrderMessage
     {
         public string OrderId { get; set; } = Guid.NewGuid().ToString();
+
         [Required(ErrorMessage = "Customer ID is required")]
         public string CustomerId { get; set; } = string.Empty;
 
@@ -15,9 +16,11 @@ namespace ABCRetail.AzureStorage.Models
         [Required(ErrorMessage = "At least one item is required")]
         [MinLength(1, ErrorMessage = "Order must have at least one item")]
         public List<OrderItem> Items { get; set; } = new();
+
         public decimal TotalAmount { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public string Status { get; set; } = "Pending";
+
         [Required(ErrorMessage = "Shipping address is required")]
         public string ShippingAddress { get; set; } = string.Empty;
 

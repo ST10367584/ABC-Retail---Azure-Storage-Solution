@@ -1,0 +1,53 @@
+﻿@model List<ABCRetail.AzureStorage.Models.OrderMessage>
+
+@{
+    ViewData["Title"] = "Order History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <h1>📦 Order History</h1>
+        <p>All your past orders</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Shipping</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.OrderByDescending(o => o.OrderDate))
+                        {
+                            <tr>
+                                <td>@order.OrderId?.Substring(0, 8)...</td>
+                                <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@order.Items.Count item(s)</td>
+                                <td><strong>R @order.TotalAmount.ToString("F2")</strong></td>
+                                <td><span class="badge bg-warning">@order.Status</span></td>
+                                <td>@order.ShippingAddress</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <h4>No order history yet</h4>
+                    <a href="/Products" class="btn btn-primary mt-3">Start Shopping</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

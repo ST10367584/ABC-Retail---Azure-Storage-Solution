@@ -1,0 +1,89 @@
+﻿@model List<ABCRetail.AzureStorage.Models.OrderItem>
+
+@{
+    ViewData["Title"] = "My Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var total = (decimal)(ViewBag.Total ?? 0m);
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <h1>🛒 Shopping Cart</h1>
+        <p>Review your items before checkout</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>R @item.UnitPrice.ToString("F2")</td>
+                                        <td>@item.Quantity</td>
+                                        <td><strong>R @item.Subtotal.ToString("F2")</strong></td>
+                                        <td>
+                                            <form asp-action="RemoveFromCart" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <h4>Your cart is empty 🛒</h4>
+                            <a href="/Products" class="btn btn-primary mt-3">Start Shopping</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal:</span>
+                        <strong>R @total.ToString("F2")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping:</span>
+                        <strong>R 0.00</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-4">
+                        <h5>Total:</h5>
+                        <h5 class="text-primary">R @total.ToString("F2")</h5>
+                    </div>
+                    @if (Model.Any())
+                    {
+                        <a href="/Orders/Create" class="btn btn-success btn-lg w-100">Checkout</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

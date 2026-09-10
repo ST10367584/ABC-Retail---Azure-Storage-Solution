@@ -4,23 +4,28 @@
     ViewData["Title"] = "Orders";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var queueLength = ViewBag.QueueLength ?? 0;
+    var orderList = Model?.ToList() ?? new List<ABCRetail.AzureStorage.Models.OrderMessage>();
 }
 
-<h1>Order Queue</h1>
-<p>Messages stored in <strong>Azure Queue Storage</strong></p>
+<div class="page-header header-orders">
+    <h1>🛒 Order Queue</h1>
+    <p>Messages stored in <strong>Azure Queue Storage</strong></p>
+</div>
 
 <div class="row mb-4">
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <div class="alert alert-info">
             <strong>Queue Length:</strong> @queueLength messages waiting
         </div>
     </div>
-    <div class="col-md-6 text-end">
-        <a href="/Orders/Create" class="btn btn-primary">Create Order</a>
-        <form method="post" action="/Orders/ProcessNext" style="display: inline;">
-            @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-success">Process Next Order</button>
-        </form>
+    <div class="col-md-6 mb-3 text-md-end">
+        @if (User.IsInRole("Admin"))
+        {
+            <form method="post" action="/Orders/ProcessNext" style="display: inline;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success">Process Next Order</button>
+            </form>
+        }
     </div>
 </div>
 
@@ -29,35 +34,69 @@
     <div class="alert alert-success">@TempData["ProcessedOrder"]</div>
 }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Order Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var item in Model)
-            {
+<div class="card">
+    <div class="card-body" style="overflow-x: auto;">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>@item.OrderId</td>
-                    <td>@item.CustomerName</td>
-                    <td>@item.Items.Count item(s)</td>
-                    <td>$@item.TotalAmount.ToString("F2")</td>
-                    <td><span class="badge bg-warning">@item.Status</span></td>
-                    <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Order Date</th>
                 </tr>
-            }
-        }
-        else
-        {
-            <tr><td colspan="6" class="text-center">No orders in queue.</td></tr>
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+                @if (orderList.Any())
+                {
+                    @foreach (var item in orderList)
+                    {
+                        <tr>
+                            <td>@(item.OrderId?.Length > 8 ? item.OrderId.Substring(0, 8) + "..." : item.OrderId)</td>
+                            <td>@item.CustomerName</td>
+                            <td>@item.Items.Count item(s)</td>
+                            <td><strong>R @item.TotalAmount.ToString("F2")</strong></td>
+                            <td><span class="badge bg-warning">@item.Status</span></td>
+                            <td>@item.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6" class="text-center">No orders in queue.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ✅ Summary in Rands -->
+@if (orderList.Any())
+{
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📊 Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 col-md-4 mb-3">
+                            <h6 class="text-muted">Total Orders</h6>
+                            <h3 class="text-primary">@orderList.Count</h3>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <h6 class="text-muted">Total Value</h6>
+                            <h3 class="text-success">R @orderList.Sum(o => o.TotalAmount).ToString("F2")</h3>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <h6 class="text-muted">Average Order</h6>
+                            <h3 class="text-info">R @orderList.Average(o => o.TotalAmount).ToString("F2")</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

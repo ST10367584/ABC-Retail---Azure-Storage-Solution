@@ -1,0 +1,96 @@
+﻿@model ABCRetail.AzureStorage.Models.Customer
+
+@{
+    ViewData["Title"] = "My Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var myOrders = ViewBag.MyOrders as List<ABCRetail.AzureStorage.Models.OrderMessage> ?? new();
+    var totalSpent = (decimal)(ViewBag.TotalSpent ?? 0m);
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <h1>👋 Welcome, @Model.FirstName!</h1>
+        <p>Manage your account and view your orders</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="stat-card blue">
+                <h6>Total Orders</h6>
+                <h3>@myOrders.Count</h3>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card green">
+                <h6>Total Spent</h6>
+                <h3>R @totalSpent.ToString("F2")</h3>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card orange">
+                <h6>Pending Orders</h6>
+                <h3>@myOrders.Count(o => o.Status == "Pending" || o.Status == "Processing")</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>⚡ Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/MyAccount/Cart" class="btn btn-primary">🛒 My Cart</a>
+                        <a href="/MyAccount/OrderHistory" class="btn btn-success">📦 Order History</a>
+                        <a href="/MyAccount/Profile" class="btn btn-info">👤 My Profile</a>
+                        <a href="/Products" class="btn btn-warning">🛍️ Shop Products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📦 Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    @if (myOrders.Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in myOrders.Take(5))
+                                {
+                                    <tr>
+                                        <td>@order.OrderId?.Substring(0, 8)...</td>
+                                        <td>@order.Items.Count item(s)</td>
+                                        <td>R @order.TotalAmount.ToString("F2")</td>
+                                        <td>
+                                            <span class="badge bg-warning">@order.Status</span>
+                                        </td>
+                                        <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">You haven't placed any orders yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

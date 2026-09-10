@@ -21,11 +21,42 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Customers">Customers</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="/Products">Products</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Orders">Orders</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Media">Media Gallery</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="/Logs">Logs</a></li>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item"><a class="nav-link text-white" href="/MyAccount">My Account</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="/MyAccount/Cart">🛒 Cart</a></li>
+
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-white" href="/Admin">⚙️ Admin</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="/Customers">Customers</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="/Orders">Orders</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="/Media">Media</a></li>
+                                <li class="nav-item"><a class="nav-link text-white" href="/Logs">Logs</a></li>
+                            }
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-white">👋 @User.Identity.Name</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-controller="Account" asp-action="Logout" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-light mt-1">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link text-white" href="/Account/Login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="/Account/Register">Register</a></li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -35,6 +66,21 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
     </div>
 
     <footer class="border-top footer text-muted">

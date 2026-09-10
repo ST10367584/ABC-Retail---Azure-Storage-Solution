@@ -1,17 +1,21 @@
 ﻿using ABCRetail.AzureStorage.Models;
 using ABCRetail.AzureStorage.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABCRetail.AzureStorage.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class LogsController : Controller
     {
         private readonly IFileStorageService _fileService;
+        private readonly IAppLogger _appLogger;
         private readonly ILogger<LogsController> _logger;
 
-        public LogsController(IFileStorageService fileService, ILogger<LogsController> logger)
+        public LogsController(IFileStorageService fileService, IAppLogger appLogger, ILogger<LogsController> logger)
         {
             _fileService = fileService;
+            _appLogger = appLogger;
             _logger = logger;
         }
 
@@ -22,6 +26,7 @@ namespace ABCRetail.AzureStorage.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateLogEntry(string message, string level = "Information", string source = "Application")
         {
             var logEntry = new LogEntry
@@ -49,14 +54,21 @@ namespace ABCRetail.AzureStorage.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {
             await _fileService.DeleteLogAsync(id);
+
+            await _appLogger.LogAsync("Warning", "LogsController",
+                $"Log deleted: {id}",
+                User.Identity?.Name);
+
             TempData["LogDeleted"] = $"Log {id} deleted.";
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTestLogs()
         {
             var messages = new[]
@@ -88,6 +100,10 @@ namespace ABCRetail.AzureStorage.Controllers
                 };
                 await _fileService.WriteLogAsync(log);
             }
+
+            await _appLogger.LogAsync("Information", "LogsController",
+                $"Generated {messages.Length} test log entries",
+                User.Identity?.Name);
 
             TempData["TestLogsCreated"] = $"Created {messages.Length} test log entries.";
             return RedirectToAction(nameof(Index));

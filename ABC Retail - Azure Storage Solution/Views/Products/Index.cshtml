@@ -5,49 +5,84 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Products</h1>
-<p>Data stored in <strong>Azure Table Storage</strong> with images in <strong>Azure Blob Storage</strong></p>
+<div class="container mt-4">
 
-<p>
-    <a href="/Products/Create" class="btn btn-primary">Create New Product</a>
-</p>
+    <h1>Products</h1>
 
-<div class="row">
+    <div class="alert alert-info">
+        Products received by view:
+        <strong>@(Model?.Count() ?? 0)</strong>
+    </div>
+
     @if (Model != null && Model.Any())
     {
-        @foreach (var item in Model)
-        {
-            <div class="col-md-3 mb-4">
-                <div class="card h-100">
-                    <div class="card-img-top text-center bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+        <div class="row">
+
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4 mb-4">
+
+                    <div class="card h-100">
+
+                        @if (!string.IsNullOrEmpty(product.ImageUrl))
                         {
-                            <img src="@item.ImageUrl" alt="@item.Name" style="max-height: 180px; max-width: 100%;" />
+                            <img src="@product.ImageUrl"
+                                 class="card-img-top"
+                                 style="height:200px; object-fit:contain;"
+                                 alt="@product.Name" />
                         }
                         else
                         {
-                            <span class="text-muted">No Image</span>
+                            <div class="bg-light text-center p-5">
+                                No Image
+                            </div>
                         }
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                @product.Name
+                            </h5>
+
+                            <p class="card-text">
+                                @product.Description
+                            </p>
+
+                            <h4 class="text-primary">
+                                R @product.Price.ToString("F2")
+                            </h4>
+
+                            <p>
+                                <strong>Stock:</strong>
+                                @product.StockQuantity
+                            </p>
+
+                            <p>
+                                <strong>Category:</strong>
+                                @product.Category
+                            </p>
+
+                            <p>
+                                <small>
+                                    Product ID:
+                                    @product.ProductId
+                                </small>
+                            </p>
+
+                        </div>
+
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">@item.Description</p>
-                        <p class="card-text">
-                            <strong>Price:</strong> $@item.Price.ToString("F2")<br />
-                            <strong>Stock:</strong> @item.StockQuantity<br />
-                            <strong>Category:</strong> @item.Category
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="/Products/Edit/@item.ProductId" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="/Products/Delete/@item.ProductId" class="btn btn-sm btn-danger">Delete</a>
-                    </div>
+
                 </div>
-            </div>
-        }
+            }
+
+        </div>
     }
     else
     {
-        <div class="col-12"><p class="text-center">No products found.</p></div>
+        <div class="alert alert-warning">
+            No products were received by the view.
+        </div>
     }
+
 </div>

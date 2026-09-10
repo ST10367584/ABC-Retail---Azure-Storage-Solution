@@ -30,35 +30,60 @@
                 <input asp-for="Name" class="form-control" required />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
+            <!-- PRICE INPUT - CHANGED TO RAND -->
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" type="number" step="0.01" required />
+                <label asp-for="Price" class="control-label">Price (ZAR - Rands)</label>
+                <div class="input-group">
+                    <span class="input-group-text">R</span>
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0.01" required />
+                </div>
                 <span asp-validation-for="Price" class="text-danger"></span>
+                <small class="text-muted">Current price: <strong>R @Model.Price.ToString("F2")</strong></small>
             </div>
+
             <div class="form-group">
-                <label asp-for="StockQuantity" class="control-label"></label>
-                <input asp-for="StockQuantity" class="form-control" type="number" required />
+                <label asp-for="StockQuantity" class="control-label">Stock Quantity</label>
+                <input asp-for="StockQuantity" class="form-control" type="number" min="0" required />
                 <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
                 <input asp-for="Category" class="form-control" required />
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label for="imageFile" class="control-label">Change Image</label>
                 <input type="file" name="imageFile" class="form-control" accept="image/*" />
                 <small class="text-muted">Leave empty to keep current image</small>
             </div>
+
             <div class="form-group mt-3">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
                 <a href="/Products" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Current Price (ZAR)</h5>
+            </div>
+            <div class="card-body text-center">
+                <div style="font-size: 3rem; color: #2563eb; font-weight: 700;">
+                    R @Model.Price.ToString("F2")
+                </div>
+                <p class="text-muted">Update the price above to change this value</p>
+            </div>
+        </div>
     </div>
 </div>

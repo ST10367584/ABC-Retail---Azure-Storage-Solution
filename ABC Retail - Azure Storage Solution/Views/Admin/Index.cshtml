@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="page-header">
+        <h1>⚙️ Admin Dashboard</h1>
+        <p>Welcome back, @User.Identity?.Name</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card blue">
+                <h6>Total Customers</h6>
+                <h3>@ViewBag.TotalCustomers</h3>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card green">
+                <h6>Total Products</h6>
+                <h3>@ViewBag.TotalProducts</h3>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card orange">
+                <h6>Total Orders</h6>
+                <h3>@ViewBag.TotalOrders</h3>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card red">
+                <h6>Queue Length</h6>
+                <h3>@ViewBag.QueueLength</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📋 Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.RecentOrders != null && ((List<ABCRetail.AzureStorage.Models.OrderMessage>)ViewBag.RecentOrders).Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in (List<ABCRetail.AzureStorage.Models.OrderMessage>)ViewBag.RecentOrders)
+                                {
+                                    <tr>
+                                        <td>@order.OrderId?.Substring(0, 8)...</td>
+                                        <td>@order.CustomerName</td>
+                                        <td>R @order.TotalAmount.ToString("F2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No recent orders</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>⚡ Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/Admin/Customers" class="btn btn-primary">Manage Customers</a>
+                        <a href="/Admin/Orders" class="btn btn-warning">Manage Orders</a>
+                        <a href="/Products" class="btn btn-success">Manage Products</a>
+                        <a href="/Logs" class="btn btn-info">View Logs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
